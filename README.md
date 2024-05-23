@@ -4,15 +4,14 @@ This template provides a minimal setup to get React working in Vite with HMR and
 
 To run this program, you need to have **Node.js** installed.
 
-Then, you need to go in the root directory of this project. (The root directory is called by default `System_administration_dist_system`.)
+Then, you need to go in the root directory of this project. (The root directory is called by default: `System_administration_dist_system`.)
 
 You can do this by running the following command in the terminal:
 
 ```bash
 cd
 ```
-
-with the name of the root directory at the end.
+You need to change the directory to wherever you downloaded the project, with the name of the root directory at the end.
 
 Then, you can run the following commands:
 
