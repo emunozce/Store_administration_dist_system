@@ -11,6 +11,7 @@ You can do this by running the following command in the terminal:
 ```bash
 cd
 ```
+
 You need to change the directory to wherever you downloaded the project, with the name of the root directory at the end.
 
 Then, you can run the following commands:
