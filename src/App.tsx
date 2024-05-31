@@ -1,7 +1,21 @@
+import { NextUIProvider } from '@nextui-org/react';
+import Navbar from './components/Navbar';
+import { Route, Routes, useNavigate } from 'react-router-dom';
+import Home_Page from './components/Home_Page';
+
+Navbar;
+
 function App() {
+    const navigate = useNavigate();
+
     return (
         <>
-            <h1 className="text-3xl font-bold text">Hola Puto Iker</h1>
+            <NextUIProvider navigate={navigate}>
+                <Navbar />
+                <Routes>
+                    <Route path="/" element={<Home_Page />} />
+                </Routes>
+            </NextUIProvider>
         </>
     );
 }
