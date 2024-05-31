@@ -146,7 +146,7 @@ export default function Register_Sale_Page() {
                                                     'Should be more than 0.',
                                             },
                                             pattern: {
-                                                value: /^[0-9]+$/i,
+                                                value: /^[1-9]\d*$/,
                                                 message: 'Invalid quantity.',
                                             },
                                         })}
