@@ -3,7 +3,6 @@ import {
     Card,
     CardHeader,
     CardBody,
-    CardFooter,
     Input,
     Button,
     Spacer,
