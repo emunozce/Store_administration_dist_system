@@ -34,7 +34,7 @@ export default function NavbarComponent() {
                     >
                         Store Administration System
                     </Link>
-                    <Link
+                    {/* <Link
                         className="text-green-500 font-semibold text-sm sm:text-base"
                         isBlock
                         onPress={() => navigate('/sales-report')}
@@ -47,7 +47,7 @@ export default function NavbarComponent() {
                         onPress={() => navigate('/register-sale')}
                     >
                         Make a Sale
-                    </Link>
+                    </Link> */}
                 </NavbarItem>
             </NavbarContent>
             <NavbarContent justify="center">
