@@ -41,7 +41,7 @@ export default function Register_Sale_Page() {
 
     const onSubmit = handleSubmit(async (data) => {
         const jsonUserData = {
-            product: data.product,
+            product: data.product.toLowerCase(),
             price: data.price,
             quantity: data.quantity,
             total: data.price * data.quantity,
@@ -118,12 +118,15 @@ export default function Register_Sale_Page() {
                                                 message:
                                                     'Should be more than $0.00.',
                                             },
+                                            pattern: {
+                                                value: /^[0-9.]+$/i,
+                                                message: 'Invalid price.',
+                                            },
                                         })}
                                         isInvalid={errors.price ? true : false}
                                         errorMessage={errors.price?.message}
                                         type="number"
                                         label="Price"
-                                        placeholder="0.00"
                                         labelPlacement="outside"
                                         startContent={
                                             <div className="pointer-events-none flex items-center">
@@ -141,6 +144,10 @@ export default function Register_Sale_Page() {
                                                 value: 1,
                                                 message:
                                                     'Should be more than 0.',
+                                            },
+                                            pattern: {
+                                                value: /^[0-9]+$/i,
+                                                message: 'Invalid quantity.',
                                             },
                                         })}
                                         isInvalid={
