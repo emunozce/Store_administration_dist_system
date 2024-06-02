@@ -5,8 +5,6 @@ import Home_Page from './components/Home_Page';
 import Sales_Report_Page from './components/Sales_Report_Page';
 import Register_Sale_Page from './components/Register_Sale_Page';
 
-Navbar;
-
 function App() {
     const navigate = useNavigate();
 
