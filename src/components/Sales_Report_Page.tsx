@@ -6,25 +6,25 @@ import {
     TableBody,
     Spacer,
 } from '@nextui-org/react';
-import { useState } from 'react';
+// import { useState } from 'react';
 
 export default function App() {
-    const [items, setItems] = useState([]);
+    // const [items, setItems] = useState([]);
 
-    const getItems = async () => {
-        try {
-            const response = await axios.get('');
+    // const getItems = async () => {
+    //     try {
+    //         const response = await axios.get('');
 
-            const items = JSON.parse(response.data);
-            setItems(items);
-        } catch (error) {
-            if (axios.isAxiosError(error)) {
-                console.error('Error:', error.response?.data);
-            }
-        }
-    };
+    //         const items = JSON.parse(response.data);
+    //         setItems(items);
+    //     } catch (error) {
+    //         if (axios.isAxiosError(error)) {
+    //             console.error('Error:', error.response?.data);
+    //         }
+    //     }
+    // };
 
-    getItems();
+    // getItems();
 
     return (
         <div className="mx-4">
@@ -42,7 +42,7 @@ export default function App() {
                     </TableColumn>
                 </TableHeader>
                 <TableBody emptyContent={'No rows to display.'}>
-                    {items}
+                    {/* Aqui se manda a llamar al arrray de JSON */}
                 </TableBody>
             </Table>
         </div>
