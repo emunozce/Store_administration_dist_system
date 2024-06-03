@@ -5,12 +5,22 @@ import { useNavigate } from 'react-router-dom';
 export default function Home_Page({ userInfo }: { userInfo: UserInfo }) {
     const navigate = useNavigate();
 
+    let isAdmin = '';
+
+    if (userInfo.role === 'admin') {
+        isAdmin =
+            'bg-green-500 hidden text-slate-950 w-96 h-96 text-4xl my-8 lg:my-52';
+    } else {
+        isAdmin =
+            'bg-green-500 text-slate-950 w-96 h-96 text-4xl my-8 lg:my-52';
+    }
+
     return (
         <>
             {userInfo.isLoggedIn ? (
                 <div className="flex flex-col justify-around items-center sm:flex-col lg:flex-row h-full">
                     <Button
-                        className="bg-green-500 text-slate-950 w-96 h-96 text-4xl my-8 lg:my-52"
+                        className={isAdmin}
                         color="secondary"
                         onPress={() => navigate('/register-sale')}
                     >

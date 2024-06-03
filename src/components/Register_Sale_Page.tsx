@@ -6,11 +6,14 @@ import {
     Input,
     Button,
     Spacer,
+    Select,
+    SelectItem,
 } from '@nextui-org/react';
 import { useForm } from 'react-hook-form';
-import { useState } from 'react';
+import { ChangeEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Loader from './Loader';
+import { UserInfo } from '../App';
 
 interface SalesData {
     product: string;
@@ -18,13 +21,29 @@ interface SalesData {
     quantity: number;
 }
 
+interface ProductData {
+    ProductID: string;
+    Category: string;
+    Name: string;
+    Price: number;
+    StoreID: string;
+}
+
 interface ErrorData {
     message: string;
 }
 
-export default function Register_Sale_Page() {
+export default function Register_Sale_Page({
+    userInfo: userInfo,
+}: {
+    userInfo: UserInfo;
+}) {
+    const [items, setItems] = useState<ProductData[]>([]);
+    const [item, setItem] = useState<ProductData | null>(null);
+    const [firstTimeLoaded, setFirstTimeLoaded] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [isInvalid, setIsInvalid] = useState<ErrorData | null>(null);
+    const [value, setValue] = useState('');
     const navigate = useNavigate();
 
     const {
@@ -39,16 +58,55 @@ export default function Register_Sale_Page() {
         },
     });
 
-    const onSubmit = handleSubmit(async (data) => {
-        const jsonUserData = {
-            product: data.product.toLowerCase(),
-            price: data.price,
-            quantity: data.quantity,
-            total: data.price * data.quantity,
-            store_id: 1,
-        };
+    let isStoreManager = false;
 
-        console.log('jsonUserData: ', jsonUserData);
+    if (userInfo.role === 'storeManager') {
+        isStoreManager = true;
+    }
+
+    const getItems = async () => {
+        try {
+            const response = await axios.get(
+                `${import.meta.env.VITE_API_ENDPOINT}/products`,
+            );
+
+            const array: ProductData[] = response.data.body;
+
+            if (userInfo.storeID !== undefined) {
+                setItems(
+                    array.filter((obj) => obj.StoreID === userInfo.storeID),
+                );
+            } else {
+                setItems(array.filter((obj) => obj.StoreID === value));
+            }
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                console.error('Error:', error.response?.data);
+            }
+        }
+    };
+
+    const onSubmit = handleSubmit(async (data) => {
+        let jsonUserData = {};
+        if (userInfo.storeID !== undefined) {
+            jsonUserData = {
+                product: item?.Name,
+                price: item?.Price,
+                quantity: data.quantity,
+                // total: item?.Price * data.quantity,
+                store_id: userInfo.storeID,
+            };
+        } else {
+            jsonUserData = {
+                product: item?.Name,
+                price: data.price,
+                quantity: data.quantity,
+                // total: item?.Price * data.quantity,
+                store_id: value,
+            };
+        }
+
+        console.log(jsonUserData);
 
         try {
             setIsLoading(true);
@@ -67,6 +125,31 @@ export default function Register_Sale_Page() {
             }
         }
     });
+
+    const onChangeItem = (e: ChangeEvent<HTMLSelectElement>) => {
+        const selectedItem = items.find(
+            (item) => item.ProductID === e.target.value,
+        );
+        if (selectedItem) {
+            setItem(selectedItem);
+        }
+    };
+
+    if (!firstTimeLoaded) {
+        getItems();
+        setFirstTimeLoaded(true);
+    }
+
+    const handleSelectionChange = (e: ChangeEvent<HTMLSelectElement>) => {
+        setValue(e.target.value);
+    };
+
+    const stores = [
+        { value: 'store001', label: 'Store 001' },
+        { value: 'store002', label: 'Store 002' },
+        { value: 'store003', label: 'Store 003' },
+        { value: 'store004', label: 'Store 004' },
+    ];
 
     return (
         <>
@@ -94,40 +177,25 @@ export default function Register_Sale_Page() {
                                 className="flex flex-col justify-center"
                                 noValidate
                             >
-                                <Input
-                                    {...register('product', {
-                                        required: 'Product name is required',
-                                        pattern: {
-                                            value: /^[A-Za-z]/i,
-                                            message: 'Invalid product name.',
-                                        },
-                                    })}
-                                    isInvalid={errors.product ? true : false}
-                                    errorMessage={errors.product?.message}
-                                    type="text"
+                                <Select
                                     label="Product name"
                                     labelPlacement="outside"
-                                />
+                                    onChange={onChangeItem}
+                                >
+                                    {items.map((item) => (
+                                        <SelectItem key={item.ProductID}>
+                                            {item.Name}
+                                        </SelectItem>
+                                    ))}
+                                </Select>
                                 <Spacer y={2}></Spacer>
                                 <div className="flex flex-row">
                                     <Input
-                                        {...register('price', {
-                                            required: 'Price is required',
-                                            min: {
-                                                value: 0.01,
-                                                message:
-                                                    'Should be more than $0.00.',
-                                            },
-                                            pattern: {
-                                                value: /^[0-9.]+$/i,
-                                                message: 'Invalid price.',
-                                            },
-                                        })}
-                                        isInvalid={errors.price ? true : false}
-                                        errorMessage={errors.price?.message}
-                                        type="number"
+                                        type="text"
                                         label="Price"
                                         labelPlacement="outside"
+                                        placeholder={item?.Price.toString()}
+                                        disabled
                                         startContent={
                                             <div className="pointer-events-none flex items-center">
                                                 <span className="text-default-400 text-small">
@@ -159,6 +227,30 @@ export default function Register_Sale_Page() {
                                         labelPlacement="outside"
                                     />
                                 </div>
+                                <Spacer y={2}></Spacer>
+                                {isStoreManager ? (
+                                    <Input
+                                        // className="dark"
+                                        label="Store"
+                                        labelPlacement="outside"
+                                        defaultValue={userInfo.storeID}
+                                        disabled
+                                    />
+                                ) : (
+                                    <Select
+                                        // className="dark"
+                                        label="Store"
+                                        labelPlacement="outside"
+                                        placeholder="Select your Store"
+                                        onChange={handleSelectionChange}
+                                    >
+                                        {stores.map((store) => (
+                                            <SelectItem key={store.value}>
+                                                {store.label}
+                                            </SelectItem>
+                                        ))}
+                                    </Select>
+                                )}
                                 <Spacer y={6}></Spacer>
                                 <Button
                                     type="submit"
