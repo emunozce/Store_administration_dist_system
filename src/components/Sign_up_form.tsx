@@ -129,10 +129,10 @@ export default function Sign_up_form() {
     ];
 
     const stores = [
-        { value: 'store001', label: 'Store 001' },
-        { value: 'store002', label: 'Store 002' },
-        { value: 'store003', label: 'Store 003' },
-        { value: 'store004', label: 'Store 004' },
+        { value: 'Store001', label: 'Store 001' },
+        { value: 'Store002', label: 'Store 002' },
+        { value: 'Store003', label: 'Store 003' },
+        { value: 'Store004', label: 'Store 004' },
     ];
 
     return (

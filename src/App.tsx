@@ -99,7 +99,7 @@ function App() {
                     />
                     <Route
                         path="/register-sale"
-                        element={<Register_Sale_Page />}
+                        element={<Register_Sale_Page userInfo={userInfo} />}
                     />
                     <Route
                         path="/sales-report"
