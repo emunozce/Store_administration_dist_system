@@ -8,8 +8,7 @@ export default function Home_Page({ userInfo }: { userInfo: UserInfo }) {
     let isAdmin = '';
 
     if (userInfo.role === 'admin') {
-        isAdmin =
-            'bg-green-500 hidden text-slate-950 w-96 h-96 text-4xl my-8 lg:my-52';
+        isAdmin = 'hidden';
     } else {
         isAdmin =
             'bg-green-500 text-slate-950 w-96 h-96 text-4xl my-8 lg:my-52';
