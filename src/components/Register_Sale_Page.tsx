@@ -78,7 +78,7 @@ export default function Register_Sale_Page() {
                 <div className="flex justify-center items-center">
                     <Card className="w-10/12 md:w-7/12 lg:w-5/12 my-24 sm:mt-20 sm:mb-0 md:mt-40 md:mb-10">
                         <CardHeader>
-                            <h4 className="text-3xl text-green-500 font-bold hover:cursor-default">
+                            <h4 className="text-3xl text-blue-500 font-bold hover:cursor-default">
                                 Make a Sale
                             </h4>
                         </CardHeader>
@@ -162,7 +162,7 @@ export default function Register_Sale_Page() {
                                 <Spacer y={6}></Spacer>
                                 <Button
                                     type="submit"
-                                    className="self-center w-4/12 bg-green-500 font-semibold mb-4"
+                                    className="self-center w-4/12 bg-blue-500 font-semibold mb-4"
                                 >
                                     Register Sale
                                 </Button>
