@@ -39,7 +39,7 @@ export default function NavbarComponent({
                         isBlock
                         onPress={() => navigate('/')}
                     >
-                        Nombre???
+                        {userInfo.isLoggedIn ? 'Welcome!' : 'Lets Get Started!'}
                     </Link>
                 </NavbarItem>
             </NavbarContent>
