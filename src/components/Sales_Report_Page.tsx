@@ -32,18 +32,40 @@ export default function Sales_Report_Page({
 }) {
     const [items, setItems] = useState<SalesData[]>([]);
     const [firstTimeLoaded, setFirstTimeLoaded] = useState(false);
+    const [sortKey, setSortKey] = useState<keyof SalesData>('saleID'); // Aquí especificamos el tipo de sortKey
+    const [sortDirection, setSortDirection] = useState('asc');
     const [page, setPage] = useState(1);
     const [total, setTotal] = useState(0);
 
     const rowsPerPage = 10;
     const pages = Math.ceil(items.length / rowsPerPage);
+    const start = (page - 1) * rowsPerPage;
+    const end = start + rowsPerPage;
 
-    const itemsToDisplay = useMemo(() => {
-        const start = (page - 1) * rowsPerPage;
-        const end = start + rowsPerPage;
+    // Función para ordenar los datos
+    const sortedData = useMemo(() => {
+        const sorted = [...items].sort((a, b) => {
+            const first = a[sortKey];
+            const second = b[sortKey];
 
-        return items.slice(start, end);
-    }, [page, items]);
+            if (sortDirection === 'asc') {
+                return first > second ? 1 : -1;
+            } else {
+                return first < second ? 1 : -1;
+            }
+        });
+        return sorted.slice(start, end);
+    }, [items, start, end, sortKey, sortDirection]);
+
+    // Función para cambiar la dirección de ordenamiento
+    const toggleSortDirection = (key: keyof SalesData) => {
+        if (key === sortKey) {
+            setSortDirection((prev) => (prev === 'asc' ? 'desc' : 'asc'));
+        } else {
+            setSortKey(key);
+            setSortDirection('asc');
+        }
+    };
 
     const getItems = async () => {
         try {
@@ -120,6 +142,7 @@ export default function Sales_Report_Page({
                                 align="center"
                                 allowsSorting
                                 key={'product'}
+                                onClick={() => toggleSortDirection('product')}
                             >
                                 Product
                             </TableColumn>
@@ -127,6 +150,7 @@ export default function Sales_Report_Page({
                                 align="center"
                                 allowsSorting
                                 key={'quantity'}
+                                onClick={() => toggleSortDirection('quantity')}
                             >
                                 Quantity
                             </TableColumn>
@@ -134,6 +158,7 @@ export default function Sales_Report_Page({
                                 align="center"
                                 allowsSorting
                                 key={'price'}
+                                onClick={() => toggleSortDirection('price')}
                             >
                                 Price
                             </TableColumn>
@@ -141,6 +166,7 @@ export default function Sales_Report_Page({
                                 align="center"
                                 allowsSorting
                                 key={'storeID'}
+                                onClick={() => toggleSortDirection('storeID')}
                             >
                                 Store ID
                             </TableColumn>
@@ -148,6 +174,7 @@ export default function Sales_Report_Page({
                                 align="center"
                                 allowsSorting
                                 key={'saleDate'}
+                                onClick={() => toggleSortDirection('saleDate')}
                             >
                                 Sale Date
                             </TableColumn>
@@ -155,13 +182,14 @@ export default function Sales_Report_Page({
                                 align="center"
                                 allowsSorting
                                 key={'total'}
+                                onClick={() => toggleSortDirection('total')}
                             >
                                 Total
                             </TableColumn>
                         </TableHeader>
                         <TableBody
                             emptyContent={'No rows to display.'}
-                            items={itemsToDisplay}
+                            items={sortedData}
                         >
                             {(item) => (
                                 <TableRow key={item.saleID}>
