@@ -39,7 +39,13 @@ export default function Register_Sale_Page({
     userInfo: UserInfo;
 }) {
     const [items, setItems] = useState<ProductData[]>([]);
-    const [item, setItem] = useState<ProductData | null>(null);
+    const [item, setItem] = useState<ProductData>({
+        ProductID: '',
+        Category: '',
+        Name: '',
+        Price: 0,
+        StoreID: '',
+    });
     const [firstTimeLoaded, setFirstTimeLoaded] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [isInvalid, setIsInvalid] = useState<ErrorData | null>(null);
@@ -93,7 +99,7 @@ export default function Register_Sale_Page({
                 product: item?.Name,
                 price: item?.Price,
                 quantity: data.quantity,
-                // total: item?.Price * data.quantity,
+                total: item?.Price * data.quantity,
                 store_id: userInfo.storeID,
             };
         } else {
@@ -101,7 +107,7 @@ export default function Register_Sale_Page({
                 product: item?.Name,
                 price: data.price,
                 quantity: data.quantity,
-                // total: item?.Price * data.quantity,
+                total: item.Price * data.quantity,
                 store_id: value,
             };
         }
@@ -194,7 +200,7 @@ export default function Register_Sale_Page({
                                         type="text"
                                         label="Price"
                                         labelPlacement="outside"
-                                        placeholder={item?.Price.toString()}
+                                        placeholder={item.Price.toString()}
                                         disabled
                                         startContent={
                                             <div className="pointer-events-none flex items-center">
@@ -229,13 +235,23 @@ export default function Register_Sale_Page({
                                 </div>
                                 <Spacer y={2}></Spacer>
                                 {isStoreManager ? (
-                                    <Input
-                                        // className="dark"
-                                        label="Store"
-                                        labelPlacement="outside"
-                                        defaultValue={userInfo.storeID}
-                                        disabled
-                                    />
+                                    <>
+                                        <Input
+                                            type="text"
+                                            label="Category"
+                                            labelPlacement="outside"
+                                            placeholder={item.Category}
+                                            disabled
+                                        />
+                                        <Spacer y={2}></Spacer>
+                                        <Input
+                                            // className="dark"
+                                            label="Store"
+                                            labelPlacement="outside"
+                                            defaultValue={userInfo.storeID}
+                                            disabled
+                                        />
+                                    </>
                                 ) : (
                                     <Select
                                         // className="dark"
