@@ -122,7 +122,9 @@ export default function Sales_Report_Page({
                                         color="primary"
                                         page={page}
                                         total={pages}
-                                        onChange={(page) => setPage(page)}
+                                        onChange={(page: number) =>
+                                            setPage(page)
+                                        }
                                     />
                                 </div>
 
