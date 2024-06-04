@@ -88,6 +88,12 @@ function App() {
 
     isRemembered(); // Check if there is user data in storage at first web page start up
 
+    const isLoggedIn = () => {
+        if (!userInfo.isLoggedIn) {
+            navigate('/login');
+        }
+    };
+
     return (
         <>
             <NextUIProvider navigate={navigate}>
@@ -95,15 +101,30 @@ function App() {
                 <Routes>
                     <Route
                         path="/"
-                        element={<Home_Page userInfo={userInfo} />}
+                        element={
+                            <Home_Page
+                                userInfo={userInfo}
+                                isLoggedIn={isLoggedIn}
+                            />
+                        }
                     />
                     <Route
                         path="/register-sale"
-                        element={<Register_Sale_Page userInfo={userInfo} />}
+                        element={
+                            <Register_Sale_Page
+                                userInfo={userInfo}
+                                isLoggedIn={isLoggedIn}
+                            />
+                        }
                     />
                     <Route
                         path="/sales-report"
-                        element={<Sales_Report_Page />}
+                        element={
+                            <Sales_Report_Page
+                                userInfo={userInfo}
+                                isLoggedIn={isLoggedIn}
+                            />
+                        }
                     />
                     <Route path="/signup" element={<Sign_up_page />} />
                     <Route

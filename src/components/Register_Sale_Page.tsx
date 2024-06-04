@@ -23,10 +23,10 @@ interface SalesData {
 
 interface ProductData {
     ProductID: string;
-    Category: string;
-    Name: string;
-    Price: number;
-    StoreID: string;
+    category: string;
+    name: string;
+    price: number;
+    storeID: string;
 }
 
 interface ErrorData {
@@ -34,17 +34,19 @@ interface ErrorData {
 }
 
 export default function Register_Sale_Page({
-    userInfo: userInfo,
+    userInfo,
+    isLoggedIn,
 }: {
     userInfo: UserInfo;
+    isLoggedIn: () => void;
 }) {
     const [items, setItems] = useState<ProductData[]>([]);
     const [item, setItem] = useState<ProductData>({
         ProductID: '',
-        Category: '',
-        Name: '',
-        Price: 0,
-        StoreID: '',
+        category: '',
+        name: '',
+        price: 0,
+        storeID: '',
     });
     const [firstTimeLoaded, setFirstTimeLoaded] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
@@ -80,10 +82,10 @@ export default function Register_Sale_Page({
 
             if (userInfo.storeID !== undefined) {
                 setItems(
-                    array.filter((obj) => obj.StoreID === userInfo.storeID),
+                    array.filter((obj) => obj.storeID === userInfo.storeID),
                 );
             } else {
-                setItems(array.filter((obj) => obj.StoreID === value));
+                setItems(array.filter((obj) => obj.storeID === value));
             }
         } catch (error) {
             if (axios.isAxiosError(error)) {
@@ -92,38 +94,36 @@ export default function Register_Sale_Page({
         }
     };
 
+    isLoggedIn();
+
     const onSubmit = handleSubmit(async (data) => {
-        let jsonUserData = {};
-        if (userInfo.storeID !== undefined) {
-            jsonUserData = {
-                product: item?.Name,
-                price: item?.Price,
-                quantity: data.quantity,
-                total: item?.Price * data.quantity,
-                store_id: userInfo.storeID,
-            };
-        } else {
-            jsonUserData = {
-                product: item?.Name,
-                price: data.price,
-                quantity: data.quantity,
-                total: item.Price * data.quantity,
-                store_id: value,
-            };
-        }
+        const jsonUserData = {
+            product: item.name,
+            price: item.price,
+            quantity: data.quantity,
+            total: item.price * data.quantity,
+            store_id: userInfo.storeID,
+        };
 
         console.log(jsonUserData);
 
         try {
             setIsLoading(true);
-            await axios.post(`endpoint/signup`, jsonUserData, {
-                headers: {
-                    'Content-Type': 'application/json',
+            const response = await axios.post(
+                `${import.meta.env.VITE_API_ENDPOINT}/sales`,
+                jsonUserData,
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
                 },
-            });
+            );
+
+            console.log(response.data);
+
             setTimeout(() => {
                 setIsLoading(false);
-                navigate;
+                navigate('/');
             }, 1000);
         } catch (error) {
             if (axios.isAxiosError(error)) {
@@ -159,124 +159,144 @@ export default function Register_Sale_Page({
 
     return (
         <>
-            {isLoading ? (
-                <div className="my-32 sm:mb-0 md:mt-60 md:mb-10 lg:mb-0">
-                    <Loader />
-                </div>
-            ) : (
-                <div className="flex justify-center items-center">
-                    <Card className="w-10/12 md:w-7/12 lg:w-5/12 my-24 sm:mt-20 sm:mb-0 md:mt-40 md:mb-10">
-                        <CardHeader>
-                            <h4 className="text-3xl text-blue-500 font-bold hover:cursor-default">
-                                Make a Sale
-                            </h4>
-                        </CardHeader>
-                        <CardBody>
-                            {isInvalid && (
-                                <p className="text-red-600">
-                                    {isInvalid?.message}
-                                </p>
-                            )}
-                            <Spacer y={3} />
-                            <form
-                                onSubmit={onSubmit}
-                                className="flex flex-col justify-center"
-                                noValidate
-                            >
-                                <Select
-                                    label="Product name"
-                                    labelPlacement="outside"
-                                    onChange={onChangeItem}
-                                >
-                                    {items.map((item) => (
-                                        <SelectItem key={item.ProductID}>
-                                            {item.Name}
-                                        </SelectItem>
-                                    ))}
-                                </Select>
-                                <Spacer y={2}></Spacer>
-                                <div className="flex flex-row">
-                                    <Input
-                                        type="text"
-                                        label="Price"
-                                        labelPlacement="outside"
-                                        placeholder={item.Price.toString()}
-                                        disabled
-                                        startContent={
-                                            <div className="pointer-events-none flex items-center">
-                                                <span className="text-default-400 text-small">
-                                                    $
-                                                </span>
-                                            </div>
-                                        }
-                                    />
-                                    <Spacer x={2} />
-                                    <Input
-                                        {...register('quantity', {
-                                            required: 'Quantity is required',
-                                            min: {
-                                                value: 1,
-                                                message:
-                                                    'Should be more than 0.',
-                                            },
-                                            pattern: {
-                                                value: /^[1-9]\d*$/,
-                                                message: 'Invalid quantity.',
-                                            },
-                                        })}
-                                        isInvalid={
-                                            errors.quantity ? true : false
-                                        }
-                                        errorMessage={errors.quantity?.message}
-                                        type="number"
-                                        label="Quantity"
-                                        labelPlacement="outside"
-                                    />
-                                </div>
-                                <Spacer y={2}></Spacer>
-                                {isStoreManager ? (
-                                    <>
-                                        <Input
-                                            type="text"
-                                            label="Category"
-                                            labelPlacement="outside"
-                                            placeholder={item.Category}
-                                            disabled
-                                        />
-                                        <Spacer y={2}></Spacer>
-                                        <Input
-                                            // className="dark"
-                                            label="Store"
-                                            labelPlacement="outside"
-                                            defaultValue={userInfo.storeID}
-                                            disabled
-                                        />
-                                    </>
-                                ) : (
-                                    <Select
-                                        // className="dark"
-                                        label="Store"
-                                        labelPlacement="outside"
-                                        placeholder="Select your Store"
-                                        onChange={handleSelectionChange}
+            {userInfo.isLoggedIn ? (
+                <>
+                    {isLoading ? (
+                        <div className="my-32 sm:mb-0 md:mt-60 md:mb-10 lg:mb-0">
+                            <Loader />
+                        </div>
+                    ) : (
+                        <div className="flex justify-center items-center">
+                            <Card className="w-10/12 md:w-7/12 lg:w-5/12 my-24 sm:mt-20 sm:mb-0 md:mt-40 md:mb-10">
+                                <CardHeader>
+                                    <h4 className="text-3xl text-blue-500 font-bold hover:cursor-default">
+                                        Make a Sale
+                                    </h4>
+                                </CardHeader>
+                                <CardBody>
+                                    {isInvalid && (
+                                        <p className="text-red-600">
+                                            {isInvalid?.message}
+                                        </p>
+                                    )}
+                                    <Spacer y={3} />
+                                    <form
+                                        onSubmit={onSubmit}
+                                        className="flex flex-col justify-center"
+                                        noValidate
                                     >
-                                        {stores.map((store) => (
-                                            <SelectItem key={store.value}>
-                                                {store.label}
-                                            </SelectItem>
-                                        ))}
-                                    </Select>
-                                )}
-                                <Spacer y={6}></Spacer>
-                                <Button
-                                    type="submit"
-                                    className="self-center w-4/12 bg-blue-500 font-semibold mb-4"
-                                >
-                                    Register Sale
-                                </Button>
-                            </form>
-                        </CardBody>
-                    </Card>
+                                        <Select
+                                            label="Product name"
+                                            labelPlacement="outside"
+                                            onChange={onChangeItem}
+                                        >
+                                            {items.map((item) => (
+                                                <SelectItem
+                                                    key={item.ProductID}
+                                                >
+                                                    {item.name}
+                                                </SelectItem>
+                                            ))}
+                                        </Select>
+                                        <Spacer y={2}></Spacer>
+                                        <div className="flex flex-row">
+                                            <Input
+                                                type="text"
+                                                label="Price"
+                                                labelPlacement="outside"
+                                                placeholder={item.price.toString()}
+                                                disabled
+                                                startContent={
+                                                    <div className="pointer-events-none flex items-center">
+                                                        <span className="text-default-400 text-small">
+                                                            $
+                                                        </span>
+                                                    </div>
+                                                }
+                                            />
+                                            <Spacer x={2} />
+                                            <Input
+                                                {...register('quantity', {
+                                                    required:
+                                                        'Quantity is required',
+                                                    min: {
+                                                        value: 1,
+                                                        message:
+                                                            'Should be more than 0.',
+                                                    },
+                                                    pattern: {
+                                                        value: /^[1-9]\d*$/,
+                                                        message:
+                                                            'Invalid quantity.',
+                                                    },
+                                                })}
+                                                isInvalid={
+                                                    errors.quantity
+                                                        ? true
+                                                        : false
+                                                }
+                                                errorMessage={
+                                                    errors.quantity?.message
+                                                }
+                                                type="number"
+                                                label="Quantity"
+                                                labelPlacement="outside"
+                                            />
+                                        </div>
+                                        <Spacer y={2}></Spacer>
+                                        {isStoreManager ? (
+                                            <>
+                                                <Input
+                                                    type="text"
+                                                    label="Category"
+                                                    labelPlacement="outside"
+                                                    placeholder={item.category}
+                                                    disabled
+                                                />
+                                                <Spacer y={2}></Spacer>
+                                                <Input
+                                                    // className="dark"
+                                                    label="Store"
+                                                    labelPlacement="outside"
+                                                    defaultValue={
+                                                        userInfo.storeID
+                                                    }
+                                                    disabled
+                                                />
+                                            </>
+                                        ) : (
+                                            <Select
+                                                // className="dark"
+                                                label="Store"
+                                                labelPlacement="outside"
+                                                placeholder="Select your Store"
+                                                onChange={handleSelectionChange}
+                                            >
+                                                {stores.map((store) => (
+                                                    <SelectItem
+                                                        key={store.value}
+                                                    >
+                                                        {store.label}
+                                                    </SelectItem>
+                                                ))}
+                                            </Select>
+                                        )}
+                                        <Spacer y={6}></Spacer>
+                                        <Button
+                                            type="submit"
+                                            className="self-center w-4/12 bg-blue-500 font-semibold mb-4"
+                                        >
+                                            Register Sale
+                                        </Button>
+                                    </form>
+                                </CardBody>
+                            </Card>
+                        </div>
+                    )}
+                </>
+            ) : (
+                <div className="flex justify-center items-center h-screen">
+                    <Loader />
                 </div>
             )}
         </>

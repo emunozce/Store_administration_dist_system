@@ -39,7 +39,7 @@ export default function NavbarComponent({
                         isBlock
                         onPress={() => navigate('/')}
                     >
-                        Store Distributed System
+                        Nombre???
                     </Link>
                 </NavbarItem>
             </NavbarContent>
