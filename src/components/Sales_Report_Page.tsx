@@ -11,7 +11,7 @@ import {
 } from '@nextui-org/react';
 import { useMemo, useState } from 'react';
 import { UserInfo } from '../App';
-import Loader from './Loader';
+import Restrited_view_component from './Restrited_view_component';
 
 interface SalesData {
     saleID: string;
@@ -25,10 +25,8 @@ interface SalesData {
 
 export default function Sales_Report_Page({
     userInfo,
-    isLoggedIn,
 }: {
     userInfo: UserInfo;
-    isLoggedIn: () => void;
 }) {
     const [items, setItems] = useState<SalesData[]>([]);
     const [firstTimeLoaded, setFirstTimeLoaded] = useState(false);
@@ -98,8 +96,6 @@ export default function Sales_Report_Page({
     const calculateTotal = (items: SalesData[]) => {
         return items.reduce((acc, item) => acc + item.total, 0);
     };
-
-    isLoggedIn();
 
     if (!firstTimeLoaded) {
         getItems();
@@ -206,9 +202,7 @@ export default function Sales_Report_Page({
                     </Table>
                 </div>
             ) : (
-                <div className="flex justify-center items-center h-screen">
-                    <Loader />
-                </div>
+                <Restrited_view_component />
             )}
         </>
     );

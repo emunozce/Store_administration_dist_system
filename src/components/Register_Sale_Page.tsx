@@ -14,6 +14,7 @@ import { ChangeEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Loader from './Loader';
 import { UserInfo } from '../App';
+import Restrited_view_component from './Restrited_view_component';
 
 interface SalesData {
     product: string;
@@ -35,10 +36,8 @@ interface ErrorData {
 
 export default function Register_Sale_Page({
     userInfo,
-    isLoggedIn,
 }: {
     userInfo: UserInfo;
-    isLoggedIn: () => void;
 }) {
     const [items, setItems] = useState<ProductData[]>([]);
     const [item, setItem] = useState<ProductData>({
@@ -93,8 +92,6 @@ export default function Register_Sale_Page({
             }
         }
     };
-
-    isLoggedIn();
 
     const onSubmit = handleSubmit(async (data) => {
         const jsonUserData = {
@@ -186,6 +183,7 @@ export default function Register_Sale_Page({
                                         noValidate
                                     >
                                         <Select
+                                            className="dark"
                                             label="Product name"
                                             labelPlacement="outside"
                                             onChange={onChangeItem}
@@ -295,9 +293,7 @@ export default function Register_Sale_Page({
                     )}
                 </>
             ) : (
-                <div className="flex justify-center items-center h-screen">
-                    <Loader />
-                </div>
+                <Restrited_view_component />
             )}
         </>
     );
