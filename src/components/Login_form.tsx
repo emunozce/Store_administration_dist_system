@@ -39,16 +39,7 @@ export default function Login_form({
     const [isLoading, setIsLoading] = useState(false);
     const [isInvalid, setIsInvalid] = useState<ErrorData | null>(null);
     const [isRememberLogInInfo, setRememberLogInInfo] = useState(false);
-    const {
-        register,
-        handleSubmit,
-        formState: { errors },
-    } = useForm<LoginData>({
-        defaultValues: {
-            email: '',
-            password: '',
-        },
-    });
+
     const navigate = useNavigate();
 
     const onSubmit = handleSubmit(async (data) => {
@@ -146,15 +137,6 @@ export default function Login_form({
                                 noValidate
                             >
                                 <Input
-                                    {...register('email', {
-                                        required: 'Email is required',
-                                        pattern: {
-                                            value: /^\S+@\S+\.\S+$/,
-                                            message: 'Invalid email',
-                                        },
-                                    })}
-                                    isInvalid={errors.email ? true : false}
-                                    errorMessage={errors.email?.message}
                                     type="email"
                                     label="Email"
                                     labelPlacement="outside"
