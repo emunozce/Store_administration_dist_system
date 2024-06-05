@@ -161,16 +161,6 @@ export default function Login_form({
                                 />
                                 <Spacer y={2}></Spacer>
                                 <Input
-                                    {...register('password', {
-                                        required: 'Password is required',
-                                        pattern: {
-                                            value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-                                            message:
-                                                'Password must include uppercase, lowercase, number, and special character',
-                                        },
-                                    })}
-                                    isInvalid={errors.password ? true : false}
-                                    errorMessage={errors.password?.message}
                                     type="password"
                                     label="Password"
                                     labelPlacement="outside"
