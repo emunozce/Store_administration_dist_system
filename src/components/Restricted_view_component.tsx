@@ -8,11 +8,11 @@ import {
 import { useNavigate } from 'react-router-dom';
 import Logo from '../assets/browser-error.svg';
 
-export default function Restrited_view_component() {
+export default function Restricted_view_component() {
     const navigate = useNavigate();
 
     return (
-        <div className="flex items-center justify-center h-screen">
+        <div className="flex items-center justify-center my-56">
             <Card className="bg-white py-4 w-72">
                 <CardHeader className="pb-0 pt-2 px-4 flex-col items-center">
                     <p className="text-tiny text-black uppercase font-bold">

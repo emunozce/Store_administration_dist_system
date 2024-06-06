@@ -14,7 +14,7 @@ import { ChangeEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Loader from './Loader';
 import { UserInfo } from '../App';
-import Restrited_view_component from './Restrited_view_component';
+import Restrited_view_component from './Restricted_view_component';
 
 interface SalesData {
     product: string;

@@ -1,7 +1,7 @@
 import { Button } from '@nextui-org/react';
 import { UserInfo } from '../App';
 import { useNavigate } from 'react-router-dom';
-import Restrited_view_component from './Restrited_view_component';
+import Restrited_view_component from './Restricted_view_component';
 
 export default function Home_Page({ userInfo }: { userInfo: UserInfo }) {
     const navigate = useNavigate();

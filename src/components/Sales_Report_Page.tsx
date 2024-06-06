@@ -11,7 +11,7 @@ import {
 } from '@nextui-org/react';
 import { useMemo, useState } from 'react';
 import { UserInfo } from '../App';
-import Restrited_view_component from './Restrited_view_component';
+import Restrited_view_component from './Restricted_view_component';
 
 interface SalesData {
     saleID: string;
@@ -105,7 +105,7 @@ export default function Sales_Report_Page({
     return (
         <>
             {userInfo.isLoggedIn ? (
-                <div className="flex justify-center items-center mx-4 h-screen">
+                <div className="flex justify-center items-center mx-4 mt-36">
                     <Table
                         aria-label="Example static collection table"
                         bottomContent={
