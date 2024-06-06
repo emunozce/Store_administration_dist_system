@@ -24,17 +24,29 @@ interface SignUpData {
     confirm_password: string;
 }
 
+interface StoreData {
+    StoreID: string;
+    Name: string;
+    Location: string;
+}
+
 interface ErrorData {
     error: string;
 }
 
 export default function Sign_up_form() {
+    const [stores, setStores] = useState<StoreData[]>([]);
+    const [selectedStore, setSelectedStore] = useState<StoreData>({
+        StoreID: '',
+        Name: '',
+        Location: '',
+    });
+    const [firstTimeLoaded, setFirstTimeLoaded] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [isInvalid, setIsInvalid] = useState<ErrorData | null>(null);
-    const [value, setValue] = useState('');
-    const navigate = useNavigate();
-    let storeID = '';
+    const [role, setRole] = useState('');
 
+    const navigate = useNavigate();
     const {
         register,
         handleSubmit,
@@ -50,22 +62,33 @@ export default function Sign_up_form() {
         },
     });
 
-    const onSubmit = handleSubmit(async (data) => {
-        let storeManager = false;
-        if (storeID !== '') {
-            storeManager = true;
-        }
+    const getStores = async () => {
+        try {
+            const response = await axios.get(
+                `${import.meta.env.VITE_API_ENDPOINT}/stores`,
+            );
 
+            const array: StoreData[] = response.data.body;
+
+            setStores(array);
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                console.error('Error:', error.response?.data);
+            }
+        }
+    };
+
+    const onSubmit = handleSubmit(async (data) => {
         let jsonUserData = {};
 
-        if (storeManager) {
+        if (role === 'storeManager') {
             jsonUserData = {
                 name: data.name,
                 lastname: data.lastname,
                 email: data.email,
                 password: data.password,
-                role: value,
-                storeID: storeID,
+                role: role,
+                storeID: selectedStore.StoreID,
             };
         } else {
             jsonUserData = {
@@ -73,7 +96,7 @@ export default function Sign_up_form() {
                 lastname: data.lastname,
                 email: data.email,
                 password: data.password,
-                role: value,
+                role: role,
             };
         }
 
@@ -112,28 +135,27 @@ export default function Sign_up_form() {
         }
     });
 
-    const handleSelectionChange = (e: ChangeEvent<HTMLSelectElement>) => {
-        setValue(e.target.value);
+    const handleRoleSelectionChange = (e: ChangeEvent<HTMLSelectElement>) => {
+        setRole(e.target.value);
     };
 
     const handleStoreSelectionChange = (e: ChangeEvent<HTMLSelectElement>) => {
-        storeID = e.target.value;
-        console.log(storeID);
+        stores.forEach((store) => {
+            if (store.StoreID === e.target.value) {
+                setSelectedStore(store);
+            }
+        });
     };
-
-    console.log(value);
 
     const roles = [
         { value: 'admin', label: 'Admin' },
         { value: 'storeManager', label: 'Store Manager' },
     ];
 
-    const stores = [
-        { value: 'store001', label: 'Store 001' },
-        { value: 'store002', label: 'Store 002' },
-        { value: 'store003', label: 'Store 003' },
-        { value: 'store004', label: 'Store 004' },
-    ];
+    if (!firstTimeLoaded) {
+        getStores();
+        setFirstTimeLoaded(true);
+    }
 
     return (
         <>
@@ -143,7 +165,7 @@ export default function Sign_up_form() {
                         <Loader />
                     </div>
                 ) : (
-                    <Card className="w-10/12 md:w-7/12 lg:w-5/12 my-24 sm:mt-20 sm:mb-0 md:mt-40 md:mb-10">
+                    <Card className="w-10/12 md:w-7/12 lg:w-5/12 my-24 sm:mt-20 sm:mb-0 md:mt-32 md:mb-10">
                         <CardHeader>
                             <h4 className="text-3xl text-blue-500 font-bold hover:cursor-default">
                                 Sign Up
@@ -265,7 +287,7 @@ export default function Sign_up_form() {
                                     label="Role"
                                     labelPlacement="outside"
                                     placeholder="Select your role"
-                                    onChange={handleSelectionChange}
+                                    onChange={handleRoleSelectionChange}
                                 >
                                     {roles.map((role) => (
                                         <SelectItem key={role.value}>
@@ -273,7 +295,7 @@ export default function Sign_up_form() {
                                         </SelectItem>
                                     ))}
                                 </Select>
-                                {value == 'storeManager' && (
+                                {role == 'storeManager' && (
                                     <>
                                         <Spacer y={2}></Spacer>
                                         <Select
@@ -287,11 +309,31 @@ export default function Sign_up_form() {
                                             }
                                         >
                                             {stores.map((store) => (
-                                                <SelectItem key={store.value}>
-                                                    {store.label}
+                                                <SelectItem key={store.StoreID}>
+                                                    {store.Name}
                                                 </SelectItem>
                                             ))}
                                         </Select>
+                                        <Spacer y={2}></Spacer>
+                                        <div className="flex flex-row">
+                                            <Input
+                                                label="Store ID"
+                                                labelPlacement="outside"
+                                                placeholder={
+                                                    selectedStore.StoreID
+                                                }
+                                                disabled
+                                            />
+                                            <Spacer x={2} />
+                                            <Input
+                                                label="Location"
+                                                labelPlacement="outside"
+                                                placeholder={
+                                                    selectedStore.Location
+                                                }
+                                                disabled
+                                            />
+                                        </div>
                                     </>
                                 )}
                                 <Spacer y={6}></Spacer>

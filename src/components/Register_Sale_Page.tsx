@@ -40,7 +40,7 @@ export default function Register_Sale_Page({
     userInfo: UserInfo;
 }) {
     const [items, setItems] = useState<ProductData[]>([]);
-    const [item, setItem] = useState<ProductData>({
+    const [selectedItem, setSelectedItem] = useState<ProductData>({
         ProductID: '',
         category: '',
         name: '',
@@ -50,9 +50,8 @@ export default function Register_Sale_Page({
     const [firstTimeLoaded, setFirstTimeLoaded] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [isInvalid, setIsInvalid] = useState<ErrorData | null>(null);
-    const [value, setValue] = useState('');
-    const navigate = useNavigate();
 
+    const navigate = useNavigate();
     const {
         register,
         handleSubmit,
@@ -65,12 +64,6 @@ export default function Register_Sale_Page({
         },
     });
 
-    let isStoreManager = false;
-
-    if (userInfo.role === 'storeManager') {
-        isStoreManager = true;
-    }
-
     const getItems = async () => {
         try {
             const response = await axios.get(
@@ -79,13 +72,7 @@ export default function Register_Sale_Page({
 
             const array: ProductData[] = response.data.body;
 
-            if (userInfo.storeID !== undefined) {
-                setItems(
-                    array.filter((obj) => obj.storeID === userInfo.storeID),
-                );
-            } else {
-                setItems(array.filter((obj) => obj.storeID === value));
-            }
+            setItems(array.filter((obj) => obj.storeID === userInfo.storeID));
         } catch (error) {
             if (axios.isAxiosError(error)) {
                 console.error('Error:', error.response?.data);
@@ -94,19 +81,24 @@ export default function Register_Sale_Page({
     };
 
     const onSubmit = handleSubmit(async (data) => {
+        if (!selectedItem.ProductID) {
+            setIsInvalid({
+                message: 'Please select a product.',
+            });
+            return;
+        }
+
         const jsonUserData = {
-            product: item.name,
-            price: item.price,
+            product: selectedItem.name,
+            price: selectedItem.price,
             quantity: data.quantity,
-            total: item.price * data.quantity,
+            total: selectedItem.price * data.quantity,
             store_id: userInfo.storeID,
         };
 
-        console.log(jsonUserData);
-
         try {
             setIsLoading(true);
-            const response = await axios.post(
+            await axios.post(
                 `${import.meta.env.VITE_API_ENDPOINT}/sales`,
                 jsonUserData,
                 {
@@ -115,8 +107,6 @@ export default function Register_Sale_Page({
                     },
                 },
             );
-
-            console.log(response.data);
 
             setTimeout(() => {
                 setIsLoading(false);
@@ -134,7 +124,7 @@ export default function Register_Sale_Page({
             (item) => item.ProductID === e.target.value,
         );
         if (selectedItem) {
-            setItem(selectedItem);
+            setSelectedItem(selectedItem);
         }
     };
 
@@ -142,17 +132,6 @@ export default function Register_Sale_Page({
         getItems();
         setFirstTimeLoaded(true);
     }
-
-    const handleSelectionChange = (e: ChangeEvent<HTMLSelectElement>) => {
-        setValue(e.target.value);
-    };
-
-    const stores = [
-        { value: 'store001', label: 'Store 001' },
-        { value: 'store002', label: 'Store 002' },
-        { value: 'store003', label: 'Store 003' },
-        { value: 'store004', label: 'Store 004' },
-    ];
 
     return (
         <>
@@ -183,7 +162,6 @@ export default function Register_Sale_Page({
                                         noValidate
                                     >
                                         <Select
-                                            className="dark"
                                             label="Product name"
                                             labelPlacement="outside"
                                             onChange={onChangeItem}
@@ -202,7 +180,7 @@ export default function Register_Sale_Page({
                                                 type="text"
                                                 label="Price"
                                                 labelPlacement="outside"
-                                                placeholder={item.price.toString()}
+                                                placeholder={selectedItem.price.toString()}
                                                 disabled
                                                 startContent={
                                                     <div className="pointer-events-none flex items-center">
@@ -242,43 +220,22 @@ export default function Register_Sale_Page({
                                             />
                                         </div>
                                         <Spacer y={2}></Spacer>
-                                        {isStoreManager ? (
-                                            <>
-                                                <Input
-                                                    type="text"
-                                                    label="Category"
-                                                    labelPlacement="outside"
-                                                    placeholder={item.category}
-                                                    disabled
-                                                />
-                                                <Spacer y={2}></Spacer>
-                                                <Input
-                                                    // className="dark"
-                                                    label="Store"
-                                                    labelPlacement="outside"
-                                                    defaultValue={
-                                                        userInfo.storeID
-                                                    }
-                                                    disabled
-                                                />
-                                            </>
-                                        ) : (
-                                            <Select
-                                                // className="dark"
-                                                label="Store"
-                                                labelPlacement="outside"
-                                                placeholder="Select your Store"
-                                                onChange={handleSelectionChange}
-                                            >
-                                                {stores.map((store) => (
-                                                    <SelectItem
-                                                        key={store.value}
-                                                    >
-                                                        {store.label}
-                                                    </SelectItem>
-                                                ))}
-                                            </Select>
-                                        )}
+                                        <Input
+                                            type="text"
+                                            label="Category"
+                                            labelPlacement="outside"
+                                            placeholder={selectedItem.category}
+                                            disabled
+                                        />
+                                        <Spacer y={2}></Spacer>
+                                        <Input
+                                            type="text"
+                                            label="Store"
+                                            labelPlacement="outside"
+                                            placeholder={userInfo.storeID}
+                                            disabled
+                                        />
+
                                         <Spacer y={6}></Spacer>
                                         <Button
                                             type="submit"
