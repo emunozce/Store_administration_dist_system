@@ -234,7 +234,7 @@ export default function Sales_Report_Page({
                                     },
                                 ]}
                                 width={800}
-                                height={500}
+                                height={400}
                             />
                         </Card>
                     </div>
