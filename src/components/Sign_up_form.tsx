@@ -114,10 +114,8 @@ export default function Sign_up_form() {
             );
 
             if (response.data.status === 201) {
-                setTimeout(() => {
-                    setIsLoading(false);
-                    navigate('/login');
-                }, 1000);
+                setIsLoading(false);
+                navigate('/login');
             } else {
                 setTimeout(() => {
                     setIsLoading(false);

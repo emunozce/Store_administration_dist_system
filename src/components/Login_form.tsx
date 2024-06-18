@@ -98,10 +98,8 @@ export default function Login_form({
                     isRememberLogInInfo,
                 ); // Set user info
 
-                setTimeout(() => {
-                    setIsLoading(false);
-                    navigate('/'); // Redirect to home page
-                }, 1000);
+                setIsLoading(false);
+                navigate('/'); // Redirect to home page
             } else {
                 setTimeout(() => {
                     setIsLoading(false);
@@ -111,9 +109,6 @@ export default function Login_form({
             }
         } catch (error) {
             if (axios.isAxiosError(error)) {
-                setTimeout(() => {
-                    setIsLoading(false);
-                }, 1000);
                 setIsInvalid(error?.response?.data);
             }
         }

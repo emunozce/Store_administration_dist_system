@@ -8,10 +8,12 @@ import {
     TableCell,
     getKeyValue,
     Pagination,
+    Card,
 } from '@nextui-org/react';
 import { useMemo, useState } from 'react';
 import { UserInfo } from '../App';
-import Restrited_view_component from './Restricted_view_component';
+import Restricted_view_component from './Restricted_view_component';
+import { PieChart } from '@mui/x-charts';
 
 interface SalesData {
     saleID: string;
@@ -102,107 +104,143 @@ export default function Sales_Report_Page({
         setFirstTimeLoaded(true);
     }
 
+    const pieData = sortedData.map((item) => {
+        return {
+            label: item.product,
+            value: item.quantity,
+        };
+    });
+
     return (
         <>
             {userInfo.isLoggedIn ? (
-                <div className="flex justify-center items-center mx-4 mt-36">
-                    <Table
-                        aria-label="Example static collection table"
-                        bottomContent={
-                            <>
-                                <div className="flex w-full justify-center">
-                                    <Pagination
-                                        isCompact
-                                        showControls
-                                        showShadow
-                                        color="primary"
-                                        page={page}
-                                        total={pages}
-                                        onChange={(page: number) =>
-                                            setPage(page)
-                                        }
-                                    />
-                                </div>
-
-                                <div className="flex justify-end">
-                                    <div className="text-3xl">
-                                        Sales Total: ${total}
+                <>
+                    <div className="flex justify-center items-center mx-4 mt-11">
+                        <Table
+                            aria-label="Example static collection table"
+                            bottomContent={
+                                <>
+                                    <div className="flex w-full justify-center">
+                                        <Pagination
+                                            isCompact
+                                            showControls
+                                            showShadow
+                                            color="primary"
+                                            page={page}
+                                            total={pages}
+                                            onChange={(page: number) =>
+                                                setPage(page)
+                                            }
+                                        />
                                     </div>
-                                </div>
-                            </>
-                        }
-                    >
-                        <TableHeader>
-                            <TableColumn align="center" key={'saleID'}>
-                                Sale ID
-                            </TableColumn>
-                            <TableColumn
-                                align="center"
-                                allowsSorting
-                                key={'product'}
-                                onClick={() => toggleSortDirection('product')}
-                            >
-                                Product
-                            </TableColumn>
-                            <TableColumn
-                                align="center"
-                                allowsSorting
-                                key={'quantity'}
-                                onClick={() => toggleSortDirection('quantity')}
-                            >
-                                Quantity
-                            </TableColumn>
-                            <TableColumn
-                                align="center"
-                                allowsSorting
-                                key={'price'}
-                                onClick={() => toggleSortDirection('price')}
-                            >
-                                Price
-                            </TableColumn>
-                            <TableColumn
-                                align="center"
-                                allowsSorting
-                                key={'storeID'}
-                                onClick={() => toggleSortDirection('storeID')}
-                            >
-                                Store ID
-                            </TableColumn>
-                            <TableColumn
-                                align="center"
-                                allowsSorting
-                                key={'saleDate'}
-                                onClick={() => toggleSortDirection('saleDate')}
-                            >
-                                Sale Date
-                            </TableColumn>
-                            <TableColumn
-                                align="center"
-                                allowsSorting
-                                key={'total'}
-                                onClick={() => toggleSortDirection('total')}
-                            >
-                                Total
-                            </TableColumn>
-                        </TableHeader>
-                        <TableBody
-                            emptyContent={'No rows to display.'}
-                            items={sortedData}
+
+                                    <div className="flex justify-end">
+                                        <div className="text-3xl">
+                                            Sales Total: ${total}
+                                        </div>
+                                    </div>
+                                </>
+                            }
                         >
-                            {(item) => (
-                                <TableRow key={item.saleID}>
-                                    {(columnKey) => (
-                                        <TableCell>
-                                            {getKeyValue(item, columnKey)}
-                                        </TableCell>
-                                    )}
-                                </TableRow>
-                            )}
-                        </TableBody>
-                    </Table>
-                </div>
+                            <TableHeader>
+                                <TableColumn align="center" key={'saleID'}>
+                                    Sale ID
+                                </TableColumn>
+                                <TableColumn
+                                    align="center"
+                                    allowsSorting
+                                    key={'product'}
+                                    onClick={() =>
+                                        toggleSortDirection('product')
+                                    }
+                                >
+                                    Product
+                                </TableColumn>
+                                <TableColumn
+                                    align="center"
+                                    allowsSorting
+                                    key={'quantity'}
+                                    onClick={() =>
+                                        toggleSortDirection('quantity')
+                                    }
+                                >
+                                    Quantity
+                                </TableColumn>
+                                <TableColumn
+                                    align="center"
+                                    allowsSorting
+                                    key={'price'}
+                                    onClick={() => toggleSortDirection('price')}
+                                >
+                                    Price
+                                </TableColumn>
+                                <TableColumn
+                                    align="center"
+                                    allowsSorting
+                                    key={'storeID'}
+                                    onClick={() =>
+                                        toggleSortDirection('storeID')
+                                    }
+                                >
+                                    Store ID
+                                </TableColumn>
+                                <TableColumn
+                                    align="center"
+                                    allowsSorting
+                                    key={'saleDate'}
+                                    onClick={() =>
+                                        toggleSortDirection('saleDate')
+                                    }
+                                >
+                                    Sale Date
+                                </TableColumn>
+                                <TableColumn
+                                    align="center"
+                                    allowsSorting
+                                    key={'total'}
+                                    onClick={() => toggleSortDirection('total')}
+                                >
+                                    Total
+                                </TableColumn>
+                            </TableHeader>
+                            <TableBody
+                                emptyContent={'No rows to display.'}
+                                items={sortedData}
+                            >
+                                {(item) => (
+                                    <TableRow key={item.saleID}>
+                                        {(columnKey) => (
+                                            <TableCell>
+                                                {getKeyValue(item, columnKey)}
+                                            </TableCell>
+                                        )}
+                                    </TableRow>
+                                )}
+                            </TableBody>
+                        </Table>
+                    </div>
+                    <div className="flex justify-around flex-wrap items-center mt-5">
+                        <Card className="bg-white my-3">
+                            <PieChart
+                                series={[
+                                    {
+                                        data: pieData,
+                                        innerRadius: 30,
+                                        outerRadius: 100,
+                                        paddingAngle: 2,
+                                        cornerRadius: 5,
+                                        startAngle: -90,
+                                        // endAngle: 180,
+                                    },
+                                ]}
+                                width={800}
+                                height={500}
+                            />
+                        </Card>
+                    </div>
+                </>
             ) : (
-                <Restrited_view_component />
+                <Restricted_view_component />
             )}
         </>
     );
