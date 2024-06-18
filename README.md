@@ -9,7 +9,7 @@ Then, you need to go in the root directory of this project. (The root directory 
 You can do this by running the following command in the terminal:
 
 ```bash
-cd
+cd store_administration_dist_system
 ```
 
 You need to change the directory to wherever you downloaded the project, with the name of the root directory at the end.
